@@ -1,4 +1,6 @@
 import React from "react";
+import useSWR from "swr";
+import { PostsDirectory } from "../../lib/util";
 
 import { getPosts, getPostDetails } from "../../services";
 import {
@@ -13,6 +15,16 @@ import {
 import { useRouter } from "next/router";
 
 const PostDetails = ({ post }) => {
+  const { data } = useSWR(
+    `/api/page-views?slug=${encodeURIComponent(PostsDirectory + post.slug)}`,
+
+    async (url) => {
+      const res = await fetch(url);
+      return res.json();
+    },
+    { revalidateOnFocus: false }
+  );
+  const views = data?.pageViews || 0;
   const router = useRouter();
   if (router.isFallback) {
     return <Loader />;
@@ -23,6 +35,10 @@ const PostDetails = ({ post }) => {
         <div className=" col-span-1 lg:col-span-8">
           <PostDetail post={post} />
           <Author author={post.author} />
+          |&nbsp;
+          <i id="eye" className="fa fa-eye" aria-hidden="true"></i>
+          &nbsp;
+          {views}
           <CommentsForm slug={post.slug} />
           <Comments slug={post.slug} />
         </div>

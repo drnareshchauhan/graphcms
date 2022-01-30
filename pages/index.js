@@ -2,11 +2,37 @@ import Head from "next/head";
 import { PostCard, Categories, PostWidget } from "../components";
 import { getPosts } from "../services";
 import { FeaturedPosts } from "../sections";
+import { GA_TRACKING_ID } from "../lib/gtag";
 
 export default function Home({ posts }) {
   return (
     <div className="container mx-auto px-10 mb-8">
       <Head>
+        {GA_TRACKING_ID ? (
+          <>
+            <script
+              async
+              src={`https://www.googletagmanager.com/gtag/js?id=${GA_TRACKING_ID}`}
+            />
+            <script
+              dangerouslySetInnerHTML={{
+                __html: `
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', '${GA_TRACKING_ID}');
+              `,
+              }}
+            />
+          </>
+        ) : null}
+        <link
+          rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.0/css/all.min.css"
+          integrity="sha512-BnbUDfEUfV0Slx6TunuB042k9tuKe3xrD6q4mg5Ed72LTgzDIcLPxg6yI2gcMFRyomt+yJJxE+zJwNmxki6/RA=="
+          crossOrigin="anonymous"
+          referrerPolicy="no-referrer"
+        />
         <title>pSm Review</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
